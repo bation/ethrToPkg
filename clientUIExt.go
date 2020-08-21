@@ -6,9 +6,7 @@
 package ethr
 
 import (
-	"fmt"
 	"sync/atomic"
-	"time"
 )
 
 type BindWithStruct struct {

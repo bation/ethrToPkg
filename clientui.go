@@ -156,7 +156,8 @@ func (u *clientUI) emitTestResult(s *ethrSession, proto EthrProtocol, seconds ui
 		if found && test.isActive {
 			data = atomic.SwapUint64(&test.testResult.data, 0)
 			data /= seconds
-			printTestResult(test, data, seconds)
+			//printTestResult(test, data, seconds)
+			getHttpTestResult(test, data, seconds)
 		}
 	}
 }
