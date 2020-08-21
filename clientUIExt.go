@@ -11,7 +11,6 @@ import (
 
 type BindWithStruct struct {
 	Protocol string `json:"protocol"`
-	Interval uint64 `json:"interval"`
 	Bits     string `json:"bits"`
 }
 
@@ -19,14 +18,17 @@ type BindWithStruct struct {
 type cData struct {
 	BandwidthArr []BindWithStruct
 	IsDone bool
+	IsRunning bool
 }
-func(c *cData) ClearData(){
+func(c *cData) clearData(){
 	c.BandwidthArr = make([]BindWithStruct,0)
 	gInterval=0
+
 }
 func(c *cData) Init(){
 	c.IsDone = false
-	c.ClearData()
+	c.clearData()
+	c.IsRunning = false
 }
 func getHttpTestResult(test *ethrTest, value uint64, seconds uint64) BindWithStruct {
 	var res BindWithStruct
@@ -46,7 +48,6 @@ func getHttpTestResult(test *ethrTest, value uint64, seconds uint64) BindWithStr
 				ui.printMsg("[%3d]     %-5s    %03d-%03d sec   %7s", ec.fd,
 					protoToString(test.testParam.TestID.Protocol),
 					gInterval, gInterval+1, bytesToRate(val))
-				res.Interval = gInterval
 				res.Bits = bytesToRate(val)
 			}
 			cvalue += val
@@ -56,7 +57,6 @@ func getHttpTestResult(test *ethrTest, value uint64, seconds uint64) BindWithStr
 			ui.printMsg("[SUM]     %-5s    %03d-%03d sec   %7s",
 				protoToString(test.testParam.TestID.Protocol),
 				gInterval, gInterval+1, bytesToRate(cvalue))
-			res.Interval = gInterval
 			res.Bits = bytesToRate(cvalue)
 			if !gNoConnectionStats {
 				ui.printMsg("- - - - - - - - - - - - - - - - - - - - - - -")
@@ -75,7 +75,6 @@ func getHttpTestResult(test *ethrTest, value uint64, seconds uint64) BindWithStr
 		logResults([]string{test.session.remoteAddr, protoToString(test.testParam.TestID.Protocol),
 			"", cpsToString(value), "", ""})
 
-		res.Interval = gInterval
 		res.Bits = bytesToRate(value)
 
 	} else if test.testParam.TestID.Type == Pps {
@@ -88,7 +87,6 @@ func getHttpTestResult(test *ethrTest, value uint64, seconds uint64) BindWithStr
 			gInterval, gInterval+1, ppsToString(value))
 		logResults([]string{test.session.remoteAddr, protoToString(test.testParam.TestID.Protocol),
 			"", "", ppsToString(value), ""})
-		res.Interval = gInterval
 		res.Bits = bytesToRate(value)
 
 	} else if test.testParam.TestID.Type == Bandwidth &&
@@ -101,10 +99,10 @@ func getHttpTestResult(test *ethrTest, value uint64, seconds uint64) BindWithStr
 		logResults([]string{test.session.remoteAddr, protoToString(test.testParam.TestID.Protocol),
 			bytesToRate(value), "", "", ""})
 
-		res.Interval = gInterval
 		res.Bits = bytesToRate(value)
 
 	}
+
 	gInterval++
 	return res
 }

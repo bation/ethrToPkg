@@ -152,6 +152,7 @@ func (u *clientUI) emitTestResult(s *ethrSession, proto EthrProtocol, seconds ui
 	var data uint64
 	var testList = []EthrTestType{Bandwidth, Cps, Pps}
 	ResData.IsDone = false
+	ResData.IsRunning = true
 	for _, testType := range testList {
 		test, found := s.tests[EthrTestID{proto, testType}]
 		if found && test.isActive {
@@ -159,8 +160,10 @@ func (u *clientUI) emitTestResult(s *ethrSession, proto EthrProtocol, seconds ui
 			data /= seconds
 			//printTestResult(test, data, seconds)
 			res := getHttpTestResult(test, data, seconds)
+			if res.Bits == "0" {
+				continue
+			}
 			ResData.BandwidthArr = append(ResData.BandwidthArr,res)
 		}
 	}
-	ResData.IsDone = true
 }
