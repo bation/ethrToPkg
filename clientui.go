@@ -146,18 +146,21 @@ func printTestResult(test *ethrTest, value uint64, seconds uint64) {
 	}
 	gInterval++
 }
+var ResData cData
 
 func (u *clientUI) emitTestResult(s *ethrSession, proto EthrProtocol, seconds uint64) {
 	var data uint64
 	var testList = []EthrTestType{Bandwidth, Cps, Pps}
-
+	ResData.IsDone = false
 	for _, testType := range testList {
 		test, found := s.tests[EthrTestID{proto, testType}]
 		if found && test.isActive {
 			data = atomic.SwapUint64(&test.testResult.data, 0)
 			data /= seconds
 			//printTestResult(test, data, seconds)
-			getHttpTestResult(test, data, seconds)
+			res := getHttpTestResult(test, data, seconds)
+			ResData.BandwidthArr = append(ResData.BandwidthArr,res)
 		}
 	}
+	ResData.IsDone = true
 }
