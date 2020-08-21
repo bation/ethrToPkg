@@ -1,0 +1,30 @@
+# Files without extension (Linux binary, for example)
+*
+!/**/
+!*.*
+!Makefile
+!LICENSE
+!Dockerfile
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# VIM related files
+*.un~
+*.swp
+
+# Log files
+*.log
+
+# Golang vendor directory
+vendor/
