@@ -6,14 +6,33 @@
 package ethr
 
 import (
+	"strconv"
+	"strings"
 	"sync/atomic"
 )
 
 type BindWithStruct struct {
 	Protocol string `json:"protocol"`
 	Bits     string `json:"bits"`
+	MBits    float64 `json:"mbits"`
 }
 
+func(b *BindWithStruct) GetSpeedByMBits() float64{
+	floStr := b.Bits[0:len(b.Bits)-1]
+	res, err := strconv.ParseFloat(floStr, 64)
+	if err != nil {
+		ui.printMsg(err.Error())
+		return 0
+	}
+	if strings.HasSuffix(b.Bits,"K"){
+		res = res / float64(1024)
+	}else if strings.HasSuffix(b.Bits,"M"){
+		res = res
+	}else if strings.HasSuffix(b.Bits,"G"){
+		res = res * float64(1024)
+	}
+	return  res
+}
 //封装带宽数据
 type cData struct {
 	BandwidthArr []BindWithStruct

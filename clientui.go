@@ -163,6 +163,7 @@ func (u *clientUI) emitTestResult(s *ethrSession, proto EthrProtocol, seconds ui
 			if res.Bits == "0" {
 				continue
 			}
+			res.MBits = res.GetSpeedByMBits()
 			ResData.BandwidthArr = append(ResData.BandwidthArr,res)
 		}
 	}
